@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zb.mapper.PersonMapper">
+<resultMap id="ok" type="com.zb.enilty.Person">
+    <id property="id" column="id"></id>
+    <result property="name" column="name"></result>
+    <result property="adds" column="adds"></result>
+    <result property="age" column="age"></result>
+    <association property="deptdi" javaType="com.zb.enilty.Dept">
+        <result property="deptid" column="deptdi"></result>
+        <result property="deptname" column="deptname"></result>
+    </association>
+</resultMap>
+<sql id="kk">
+    <if test="name!=null and name!=''">
+        AND  p.`name`LIKE concat('%',#{name},'%')
+    </if>
+    <if test="deptdi!=null and deptdi!=0">
+        AND p.deptdi=#{deptdi}
+    </if>
+
+</sql>
+    <select id="fen" resultMap="ok">
+        SELECT*FROM person p,dept d WHERE p.`deptdi`=d.`deptid`
+        <include refid="kk"></include>
+           ORDER BY p.id
+        limit #{index},#{size}
+
+    </select>
+    <select id="count" resultType="int">
+         SELECT count(1) FROM person p,dept d WHERE p.`deptdi`=d.`deptid`
+         <include refid="kk"></include>
+    </select>
+    <update id="xiugai" parameterType="com.zb.enilty.Person">
+         UPDATE person SET `name`=#{name},adds=#{adds},age=#{age},deptdi=#{deptdi.deptid} where id=#{id}
+    </update>
+    <select id="weiyicha" resultMap="ok">
+            select * from person where id = #{id}
+    </select>
+    <insert id="tianjia" parameterType="com.zb.enilty.Person">
+           INSERT INTO person VALUES (NULL,#{name},#{adds},#{age},#{deptdi.deptid})
+    </insert>
+    <delete id="shan">
+         delete from person where id = #{id}
+    </delete>
+</mapper>  
